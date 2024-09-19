@@ -188,5 +188,37 @@ class AppToDo:
                         icon_color=self.cor['destaque'],
                         on_click=lambda _, t=tarefa[0]:self.excluir_tarefa(t)
                     )
-                ], )
+                ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                border=ft.border.all(1, self.cor['borda']),
+                border_radius=8,
+                padding=10,
+                bgcolor=self.cor['item_fundo']
             )
+        
+        def adicionar_tarefa(self, e):
+            # Adiciona uma nova tarefa ao banco de dados e atualiza a lista
+            if self.entrada_tarefa.value:
+                self.banco_dados.addTasks(self.entrada_tarefa.value, 'incomplete')
+                self.entrada_tarefa.value = ''
+                self.atualizar_lista_tarefas()
+
+        def alternar_status_tarefa(self, e, tarefa):
+            # Alterna o status de uma tarefa entre completa e incomplete
+            novo_status = 'complete' if e.control.value else 'incomplete'
+            self.banco_dados.updateTasks(novo_status, tarefa)
+            self.atualizar_lista_tarefas()
+
+        def excluir_tarefa(self, tarefa):
+            # Exclui uma tarefa do banco de dados e atualiza a lista
+            self.banco_dados.deleteTasks(tarefa)
+            self.atualizar_lista_tarefas()
+            self.page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"Tarefa '{tarefa}' excluída com sucesso", color=self.cor['texto']),
+                bgcolor=self.cor['item_fundo']
+            ) 
+            self.page.snack_bar.open = True
+            self.page.update()
+
+    if __name__ == "__main__":
+        ft.app(target=AppToDo) # Inicia o aplicativo Flet com a classe AppToDo
+        
